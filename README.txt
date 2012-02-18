@@ -87,6 +87,10 @@ That's everything needed to make a request for imagery::
 A very similar API exists for WebFeatureService. See
 tests/MapServerWFSCapabilities.txt for details.
 
+To Fix
+---------
+make th eWFS support much better, including servers that dont use the main namespaces
+
 Support
 -------
 
