@@ -110,11 +110,14 @@ class WCSCapabilitiesReader(object):
         @return: An elementtree tree representation of the capabilities document
         """
         request = self.capabilities_url(service_url)
+        print request
         req = Request(request)
         if self.cookies is not None:
             req.add_header('Cookie', self.cookies)   
         u = urlopen(req)
-        return etree.fromstring(u.read())
+        ret = u.read()
+        #print ret
+        return etree.fromstring(ret)
     
     def readString(self, st):
         """Parse a WCS capabilities document, returning an

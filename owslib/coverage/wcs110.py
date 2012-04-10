@@ -52,16 +52,16 @@ class WebCoverageService_1_1_0(WCSBase):
         #build metadata objects:
         
         #serviceIdentification metadata
-        elem=self._capabilities.find('{http://www.opengis.net/wcs/1.1/ows}ServiceIdentification')
+        elem=self._capabilities.find('{http://www.opengis.net/ows/2.0}ServiceIdentification')
         self.identification=ServiceIdentification(elem)
         
         #serviceProvider
-        elem=self._capabilities.find('{http://www.opengis.net/ows}ServiceProvider')
+        elem=self._capabilities.find('{http://www.opengis.net/ows/2.0}ServiceProvider')
         self.provider=ServiceProvider(elem)
                 
         #serviceOperations
         self.operations = []
-        for elem in self._capabilities.findall('{http://www.opengis.net/wcs/1.1/ows}OperationsMetadata/{http://www.opengis.net/wcs/1.1/ows}Operation/'):
+        for elem in self._capabilities.findall('{http://www.opengis.net/ows/2.0}OperationsMetadata/{http://www.opengis.net/ows/2.0}Operation/'):
             self.operations.append(Operation(elem))
         
         # exceptions - ***********TO DO *************
@@ -71,15 +71,15 @@ class WebCoverageService_1_1_0(WCSBase):
         # serviceContents: our assumption is that services use a top-level layer
         # as a metadata organizer, nothing more.
         self.contents = {}
-        top = self._capabilities.find('{http://www.opengis.net/wcs/1.1}Contents/{http://www.opengis.net/wcs/1.1}CoverageSummary')
-        for elem in self._capabilities.findall('{http://www.opengis.net/wcs/1.1}Contents/{http://www.opengis.net/wcs/1.1}CoverageSummary/{http://www.opengis.net/wcs/1.1}CoverageSummary'):                    
+        top = self._capabilities.find('{http://www.opengis.net/wcs/2.0}Contents/{http://www.opengis.net/wcs/2.0}CoverageSummary')
+        for elem in self._capabilities.findall('{http://www.opengis.net/wcs/2.0}Contents/{http://www.opengis.net/wcs/2.0}CoverageSummary'):                    
             cm=ContentMetadata(elem, top, self)
             self.contents[cm.id]=cm
             
         if self.contents=={}:
             #non-hierarchical.
             top=None
-            for elem in self._capabilities.findall('{http://www.opengis.net/wcs/1.1}Contents/{http://www.opengis.net/wcs/1.1}CoverageSummary'):     
+            for elem in self._capabilities.findall('{http://www.opengis.net/wcs/2.0}Contents/{http://www.opengis.net/wcs/2.0}CoverageSummary'):     
                 cm=ContentMetadata(elem, top, self)
                 #make the describeCoverage requests to populate the supported formats/crs attributes
                 self.contents[cm.id]=cm
@@ -130,7 +130,7 @@ class WebCoverageService_1_1_0(WCSBase):
         
         
         if method == 'Get':
-            method='{http://www.opengis.net/wcs/1.1/ows}Get'
+            method='{http://www.opengis.net/ows/2.0}Get'
         base_url = self.getOperationByName('GetCoverage').methods[method]['url']
 
 
@@ -187,9 +187,9 @@ class Operation(object):
     """
     def __init__(self, elem):
         self.name = elem.get('name')       
-        self.formatOptions = [f.text for f in elem.findall('{http://www.opengis.net/wcs/1.1/ows}Parameter/{http://www.opengis.net/wcs/1.1/ows}AllowedValues/{http://www.opengis.net/wcs/1.1/ows}Value')]
+        self.formatOptions = [f.text for f in elem.findall('{http://www.opengis.net/ows/2.0}Parameter/{http://www.opengis.net/ows/2.0}AllowedValues/{http://www.opengis.net/ows/2.0}Value')]
         methods = []
-        for verb in elem.findall('{http://www.opengis.net/wcs/1.1/ows}DCP/{http://www.opengis.net/wcs/1.1/ows}HTTP/*'):
+        for verb in elem.findall('{http://www.opengis.net/ows/2.0}DCP/{http://www.opengis.net/ows/2.0}HTTP/*'):
             url = verb.attrib['{http://www.w3.org/1999/xlink}href']
             methods.append((verb.tag, {'url': url}))
         self.methods = dict(methods)
@@ -202,11 +202,11 @@ class ServiceIdentification(object):
         self.version="1.1.0"
         self.title=testXMLValue(elem.find('{http://www.opengis.net/ows}Title'))
         if self.title is None:  #may have used the wcs ows namespace:
-            self.title=testXMLValue(elem.find('{http://www.opengis.net/wcs/1.1/ows}Title'))
+            self.title=testXMLValue(elem.find('{http://www.opengis.net/ows/2.0}Title'))
         
         self.abstract=testXMLValue(elem.find('{http://www.opengis.net/ows}Abstract'))
         if self.abstract is None:#may have used the wcs ows namespace:
-            self.abstract=testXMLValue(elem.find('{http://www.opengis.net/wcs/1.1/ows}Abstract'))
+            self.abstract=testXMLValue(elem.find('{http://www.opengis.net/ows/2.0}Abstract'))
         if elem.find('{http://www.opengis.net/ows}Abstract') is not None:
             self.abstract=elem.find('{http://www.opengis.net/ows}Abstract').text
         else:
@@ -214,13 +214,13 @@ class ServiceIdentification(object):
         self.keywords = [f.text for f in elem.findall('{http://www.opengis.net/ows}Keywords/{http://www.opengis.net/ows}Keyword')]
         #self.link = elem.find('{http://www.opengis.net/wcs/1.1}Service/{http://www.opengis.net/wcs/1.1}OnlineResource').attrib.get('{http://www.w3.org/1999/xlink}href', '')
                
-        if elem.find('{http://www.opengis.net/wcs/1.1/ows}Fees') is not None:            
-            self.fees=elem.find('{http://www.opengis.net/wcs/1.1/ows}Fees').text
+        if elem.find('{http://www.opengis.net/ows/2.0}Fees') is not None:            
+            self.fees=elem.find('{http://www.opengis.net/ows/2.0}Fees').text
         else:
             self.fees=None
         
-        if  elem.find('{http://www.opengis.net/wcs/1.1/ows}AccessConstraints') is not None:
-            self.accessConstraints=elem.find('{http://www.opengis.net/wcs/1.1/ows}AccessConstraints').text
+        if  elem.find('{http://www.opengis.net/ows/2.0}AccessConstraints') is not None:
+            self.accessConstraints=elem.find('{http://www.opengis.net/ows/2.0}AccessConstraints').text
         else:
             self.accessConstraints=None
        
@@ -291,8 +291,8 @@ class ContentMetadata(object):
         self._service=service
         self._elem=elem
         self._parent=parent
-        self.id=self._checkChildAndParent('{http://www.opengis.net/wcs/1.1}Identifier')
-        self.description =self._checkChildAndParent('{http://www.opengis.net/wcs/1.1}Description')           
+        self.id=self._checkChildAndParent('{http://www.opengis.net/wcs/2.0}CoverageID')
+        self.description =self._checkChildAndParent('{http://www.opengis.net/wcs/2.0}Description')           
         self.title =self._checkChildAndParent('{http://www.opengis.net/ows}Title')
         self.abstract =self._checkChildAndParent('{http://www.opengis.net/ows}Abstract')
         
