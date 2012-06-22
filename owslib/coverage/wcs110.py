@@ -52,7 +52,13 @@ class WebCoverageService_1_1_0(WCSBase):
         #build metadata objects:
         
         #serviceIdentification metadata
+<<<<<<< HEAD
         elem=self._capabilities.find('{http://www.opengis.net/ows/2.0}ServiceIdentification')
+=======
+        elem=self._capabilities.find('{http://www.opengis.net/wcs/1.1/ows}ServiceIdentification')
+        if elem is None:
+            elem=self._capabilities.find('{http://www.opengis.net/ows}ServiceIdentification')
+>>>>>>> upstream/master
         self.identification=ServiceIdentification(elem)
         
         #serviceProvider
