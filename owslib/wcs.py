@@ -19,7 +19,7 @@ import etree
 from coverage import wcs100, wcs110, wcsBase
 
 def WebCoverageService(url, version=None, xml=None, cookies=None):
-    ''' wcs factory function, returns a version specific WebCoverageService object '''
+    ''' wcs factory function, returns a version specific WebCoverageService object test change for testing eclipse integration'''
     
     if version is None:
         if xml is None:
